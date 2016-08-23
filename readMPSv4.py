@@ -100,6 +100,9 @@ for i in range(colsLNo + 1, rhsLNo):
 # Another list of row names to get a list of redundant rows
 actualRowNames = []
 
+
+
+
 # create an empty A array
 AMatrix = DefaultOrderedDict()
 
@@ -195,11 +198,11 @@ if boundsLNo != endLNo:
             frVariableBounds.append(mpsContents[i][14:22].strip())
     for i in range(boundsLNo + 1, endLNo):
         if mpsContents[i][1:3] == 'UP':
-            varName_1 = mpsContents[14:22].strip()
+            varName_1 = mpsContents[i][14:22].strip()
             upVariableBounds[varName_1] = mpsContents[i][24:36].strip()
     for i in range(boundsLNo + 1, endLNo):
         if mpsContents[i][1:3] == 'LO':
-            varName_2 = mpsContents[14:22].strip()
+            varName_2 = mpsContents[i][14:22].strip()
             loVariableBounds[varName_2] = mpsContents[i][24:36].strip()
     for i in range(boundsLNo + 1, endLNo):
         if mpsContents[i][1:3] == 'MI':
@@ -218,6 +221,8 @@ if boundsLNo != endLNo:
 
 pp = pprint.PrettyPrinter(indent=4, depth=3)
 
+
+
 print("Amatrix: ")
 
 # since pretty printing the default dictionary is not working
@@ -234,13 +239,38 @@ print(firstRHSName)
 
 print("RHS values:")
 pp.pprint(rhsValues)
-print("PL variables", plVariableBounds)
+print("PL variables")
+print(plVariableBounds)
 print("FR variables", frVariableBounds)
 print("MI variables", miVariableBounds)
 print("UP variables")
 pp.pprint(upVariableBounds)
 print("LO variables")
 pp.pprint(plVariableBounds)
+
+# Analysis of Bound Variables
+for variable in listOfVars:
+    # if variable in upVariableBounds and variable in loVariableBounds:
+
+    if variable in upVariableBounds and variable not in loVariableBounds:
+        tempRowName = variable[:4]+"BC"
+        rowNames.append(tempRowName)
+        Lrows.append(tempRowName)
+        AMatrix[tempRowName][variable] = 1
+        plVariableBounds.append(variable)
+        rhsValues[tempRowName] = upVariableBounds[variable]
+        actualRowNames.append(tempRowName)
+    if variable not in upVariableBounds and variable in loVariableBounds:
+        tempRowName = variable[:4]+"BC"
+        rowNames.append(tempRowName)
+        Grows.append(tempRowName)
+        AMatrix[tempRowName][variable] = 1
+        frVariableBounds.append(variable)
+        rhsValues[tempRowName] = loVariableBounds[variable]
+        actualRowNames.append(tempRowName)
+
+# for row in Lrows:
+#     if row not in AMatrix:
 
 # writing the Dual String
 s = "NAME" + 10 * " "
