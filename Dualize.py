@@ -1,5 +1,7 @@
 #Run by typing python Dualize.py MPSfilename
 
+#Author: Chaitanya GUdapati 
+
 import pprint
 from collections import OrderedDict
 from collections import defaultdict
